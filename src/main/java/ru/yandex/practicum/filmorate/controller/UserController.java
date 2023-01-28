@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.util.Validator;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,9 +21,10 @@ public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
 
     @PostMapping
-    public User create(@RequestBody User user) {
-        log.info("добавление фильма");
+    public User create(@Valid @RequestBody User user) {
+        log.info("добавление пользователя");
         validateUser(user);
+
 
         user.setId(id++);
         users.put(user.getId(), user);
@@ -31,8 +32,8 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@RequestBody User user) {
-        log.info("обновление фильма");
+    public User update(@Valid @RequestBody User user) {
+        log.info("обновление пользователя");
         validateUser(user);
         if (!users.containsKey(user.getId())) {
             log.warn("Пользователь с таким id не существует");
@@ -54,7 +55,7 @@ public class UserController {
             log.warn("Пользователь не может быть null");
             throw new ValidationException("Пользователь не может быть null");
         }
-        if (!Validator.isEmail(user.getEmail())) {
+        if (!user.getEmail().contains("@")) {
             log.warn("некорректный email");
             throw new ValidationException("некорректный email");
         }

@@ -50,7 +50,7 @@ class UserControllerTest {
 
     @Test
     void shouldExceptionWithIncorrectEmail() {
-        user.setEmail("ddd.dddf@dddd");
+        user.setEmail("ddd.dddfdddd");
         ValidationException e = assertThrows(ValidationException.class, () -> userController.create(user));
         assertEquals("некорректный email", e.getMessage());
     }
