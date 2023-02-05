@@ -1,55 +1,50 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
 
-    private int id = 1;
+    private final FilmService filmService;
 
-    private final Map<Integer, Film> films = new HashMap<>();
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
         log.info("добавление фильма");
         validateFilm(film);
 
-        film.setId(id++);
-        films.put(film.getId(), film);
-        return film;
+        return filmService.create(film);
     }
 
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
         log.info("Обновление фильма");
         validateFilm(film);
-        if (!films.containsKey(film.getId())) {
-            log.warn("Фильм с таким id не существует");
-            throw new ValidationException("Фильм с таким id не существует");
-        }
 
-        films.replace(film.getId(), film);
-        return film;
+        return filmService.update(film);
     }
 
     @GetMapping
-    public List<Film> findAll() {
+    public Collection<Film> findAll() {
         log.info("получение всех фильмов");
-        return new ArrayList<>(films.values());
+        return filmService.findAll();
     }
 
     private void validateFilm(Film film) {
