@@ -17,4 +17,8 @@ public interface FilmStorage {
 
     Collection<Film> findAll();
 
+    void like(Film film, Long userId);
+
+    void unlike(Film film, Long userId);
+
 }

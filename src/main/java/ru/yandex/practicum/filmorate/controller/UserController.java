@@ -41,6 +41,26 @@ public class UserController {
         return userService.findAll();
     }
 
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addToFriends(@PathVariable Long id, @PathVariable Long friendId) {
+        userService.addToFriends(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void removeFromFriends(@PathVariable Long id, @PathVariable Long friendId) {
+        userService.removeFromFriends(id, friendId);
+    }
+
+    @GetMapping("{id}/friends")
+    public List<User> findUserFriends(@PathVariable Long id) {
+        return userService.findUserFriends(id);
+    }
+
+    @GetMapping("{id}/friends/common/{otherId}")
+    public List<User> findCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        return userService.findCommonFriends(id, otherId);
+    }
+
     private void validateUser(User user) {
         if (user == null) {
             log.warn("Пользователь не может быть null");
