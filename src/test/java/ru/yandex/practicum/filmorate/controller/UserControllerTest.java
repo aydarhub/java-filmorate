@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -31,7 +32,7 @@ class UserControllerTest {
 
     @BeforeEach
     public void createFilm() {
-        user = new User(0, "aydarhub@yandex.ru", "login", "name",
+        user = new User(0l, "aydarhub@yandex.ru", "login", "name",
                 LocalDate.of(1999, Month.DECEMBER, 11));
     }
 
@@ -64,9 +65,9 @@ class UserControllerTest {
 
     @Test
     void shouldExceptionUpdateWithNonContainsId() {
-        user.setId(10);
-        ValidationException e = assertThrows(ValidationException.class, () -> userController.update(user));
-        assertEquals("Пользователь с таким id не существует", e.getMessage());
+        user.setId(10l);
+        NotFoundException e = assertThrows(NotFoundException.class, () -> userController.update(user));
+        assertEquals("Пользователя с таким id = 10 не существует", e.getMessage());
     }
 
     @Test
