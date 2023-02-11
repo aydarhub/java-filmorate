@@ -16,7 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class Film {
 
-    private int id;
+    private Long id;
 
     @NotBlank(message = "название не может быть пустым")
     private String name;

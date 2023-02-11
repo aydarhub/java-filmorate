@@ -43,22 +43,32 @@ public class UserController {
 
     @PutMapping("/{id}/friends/{friendId}")
     public void addToFriends(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info(String.format("Пользователи с id = %d, %d подружились", id, friendId));
         userService.addToFriends(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public void removeFromFriends(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info(String.format("Пользователи с id = %d, %d перестали дружить", id, friendId));
         userService.removeFromFriends(id, friendId);
     }
 
     @GetMapping("{id}/friends")
     public List<User> findUserFriends(@PathVariable Long id) {
+        log.info(String.format("Получение друзей пользователя с id = %d", id));
         return userService.findUserFriends(id);
     }
 
     @GetMapping("{id}/friends/common/{otherId}")
     public List<User> findCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        log.info(String.format("Получение общих друзей пользователей с id = %d, %d", id, otherId));
         return userService.findCommonFriends(id, otherId);
+    }
+
+    @GetMapping("/{id}")
+    public User userById(@PathVariable Long id) {
+        log.info(String.format("Получение пользователя с id = %d", id));
+        return userService.userById(id);
     }
 
     private void validateUser(User user) {

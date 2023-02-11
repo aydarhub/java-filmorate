@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface FilmStorage {
 
-    Optional<Film> get(Integer id);
+    Optional<Film> get(Long id);
 
     Film update(Film film);
 
@@ -20,5 +20,7 @@ public interface FilmStorage {
     void like(Film film, Long userId);
 
     void unlike(Film film, Long userId);
+
+    Collection<Film> findPopular(Integer count);
 
 }
