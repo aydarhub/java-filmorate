@@ -3,8 +3,15 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -14,17 +21,26 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FilmControllerTest {
 
+    private static FilmStorage filmStorage;
+
+    private static FilmService filmService;
     private static FilmController filmController;
+    private static UserStorage userStorage;
+    private static UserService userService;
     private Film film;
 
     @BeforeAll
     public static void createController() {
-        filmController = new FilmController();
+        filmStorage = new InMemoryFilmStorage();
+        userStorage = new InMemoryUserStorage();
+        userService = new UserService(userStorage);
+        filmService = new FilmService(filmStorage, userService);
+        filmController = new FilmController(filmService);
     }
 
     @BeforeEach
     public void createFilm() {
-        film = new Film(0, "name", "description", LocalDate.of(2005, Month.MAY, 15), 100);
+        film = new Film(0l, "name", "description", LocalDate.of(2005, Month.MAY, 15), 100);
     }
 
     @Test
@@ -63,8 +79,8 @@ class FilmControllerTest {
 
     @Test
     void shouldExceptionUpdateWithNonContainsId() {
-        film.setId(10);
-        ValidationException e = assertThrows(ValidationException.class, () -> filmController.update(film));
+        film.setId(10l);
+        NotFoundException e = assertThrows(NotFoundException.class, () -> filmController.update(film));
         assertEquals("Фильм с таким id не существует", e.getMessage());
     }
 }

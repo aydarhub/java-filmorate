@@ -10,12 +10,14 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
 public class User {
 
-    private int id;
+    private Long id;
 
     @Email(message = "некорректный email")
     private String email;
@@ -29,5 +31,7 @@ public class User {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Past(message = "дата рождения не может быть в будущем")
     private LocalDate birthday;
+
+    private final Set<Long> friends = new HashSet<>();
 
 }
