@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.FriendStatus;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -12,7 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
-@Component
+@Component("inMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
 
     private Long id = 0L;
@@ -51,25 +52,51 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void addToFriends(Long userId1, Long userId2) {
-        Optional<User> user1 = get(userId1);
-        Optional<User> user2 = get(userId2);
-        if (user1.isEmpty()) {
-            userNotFound(userId1);
-        }
-        if (user2.isEmpty()) {
-            userNotFound(userId2);
-        }
-        user1.get().getFriends().add(userId2);
-        user2.get().getFriends().add(userId1);
+    public void sendRequestToFriend(Long userId, Long friendId) {
+        Map<Long, FriendStatus> userFriends = userFriendsById(userId);
+        Map<Long, FriendStatus> friendFriends = userFriendsById(friendId);
+        userFriends.put(friendId, FriendStatus.NOT_APPROVED_OUTGOING);
+        friendFriends.put(userId, FriendStatus.NOT_APPROVED_INCOMING);
     }
 
     @Override
-    public void removeFromFriends(Long userId1, Long userId2) {
-        Optional<User> user1 = get(userId1);
-        Optional<User> user2 = get(userId2);
-        user1.get().getFriends().remove(userId2);
-        user2.get().getFriends().remove(userId1);
+    public void acceptRequestFriend(Long userId, Long friendId) {
+        Map<Long, FriendStatus> userFriends = userFriendsById(userId);
+        Map<Long, FriendStatus> friendFriends = userFriendsById(friendId);
+
+        if (userFriends.containsKey(friendId)
+                && userFriends.get(friendId).equals(FriendStatus.NOT_APPROVED_INCOMING)) {
+            userFriends.replace(friendId, FriendStatus.FRIEND);
+            friendFriends.replace(userId, FriendStatus.FRIEND);
+        }
+    }
+
+    @Override
+    public void removeFromFriends(Long userId, Long friendId) {
+        Map<Long, FriendStatus> userFriends = userFriendsById(userId);
+        Map<Long, FriendStatus> friendFriends = userFriendsById(friendId);
+        if (userFriends.containsKey(friendId)) {
+            userFriends.replace(friendId, FriendStatus.DECLINED);
+            if (friendFriends.get(userId).equals(FriendStatus.FRIEND)) {
+                friendFriends.replace(userId, FriendStatus.NOT_APPROVED_OUTGOING);
+            }
+        }
+
+        if (userFriends.get(friendId).equals(FriendStatus.DECLINED)
+                && friendFriends.get(userId).equals(FriendStatus.DECLINED)) {
+            userFriends.remove(friendId);
+            friendFriends.remove(userId);
+        }
+
+    }
+
+    private Map<Long, FriendStatus> userFriendsById(Long userId) {
+        Optional<User> user = get(userId);
+        if (user.isEmpty()) {
+            userNotFound(userId);
+        }
+        return user.get().getFriends();
+
     }
 
 

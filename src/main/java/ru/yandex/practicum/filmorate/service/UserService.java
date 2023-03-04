@@ -2,8 +2,10 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.FriendStatus;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -19,7 +21,7 @@ public class UserService {
     private final UserStorage userStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("inMemoryUserStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
@@ -42,17 +44,30 @@ public class UserService {
         return userStorage.findAll();
     }
 
-    public void addToFriends(Long userId1, Long userId2) {
-        userStorage.addToFriends(userId1, userId2);
+    public void addToFriend(Long userId, Long friendId) {
+        if (userById(userId).getFriends().containsKey(friendId)) {
+            acceptRequestFriend(userId, friendId);
+        } else {
+            sendRequestToFriend(userId, friendId);
+        }
     }
 
-    public void removeFromFriends(Long userId1, Long userId2) {
-        userStorage.removeFromFriends(userId1, userId2);
+    private void sendRequestToFriend(Long userId, Long friendId) {
+        userStorage.sendRequestToFriend(userId, friendId);
+    }
+
+    private void acceptRequestFriend(Long userId, Long friendId) {
+        userStorage.acceptRequestFriend(userId, friendId);
+    }
+
+    public void removeFromFriends(Long userId, Long friendId) {
+        userStorage.removeFromFriends(userId, friendId);
     }
 
     public List<User> findUserFriends(Long id) {
         User user = userById(id);
-        return user.getFriends().stream()
+        return user.getFriends().keySet().stream()
+                .filter(friendId -> user.getFriends().get(friendId).equals(FriendStatus.FRIEND))
                 .map(userStorage::get)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -60,13 +75,8 @@ public class UserService {
     }
 
     public List<User> findCommonFriends(Long userId1, Long userId2) {
-        User user1 = userById(userId1);
-        User user2 = userById(userId2);
-        return user1.getFriends().stream()
-                .filter(id -> user2.getFriends().contains(id))
-                .map(userStorage::get)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+        return findUserFriends(userId1).stream()
+                .filter(findUserFriends(userId2)::contains)
                 .collect(Collectors.toList());
     }
 
