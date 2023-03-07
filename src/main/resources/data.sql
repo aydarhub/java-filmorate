@@ -1,4 +1,4 @@
-INSERT INTO PUBLIC.USERS
+/*INSERT INTO PUBLIC.USERS
 (EMAIL, LOGIN, NAME, BIRTHDAY)
 VALUES('user1@mail.ru', 'loginuser1', 'user1', '2000-06-15');
 
@@ -60,7 +60,7 @@ VALUES(7, 2, 'DECLINED');
 
 INSERT INTO PUBLIC.FRIENDSHIP
 (USER1_ID, USER2_ID, STATUS)
-VALUES(7, 3, 'DECLINED');
+VALUES(7, 3, 'DECLINED');*/
 
 INSERT INTO PUBLIC.MPA
 (NAME)
@@ -106,7 +106,7 @@ INSERT INTO PUBLIC.GENRES
 (NAME)
 VALUES('Боевик');
 
-INSERT INTO PUBLIC.FILMS
+/*INSERT INTO PUBLIC.FILMS
 (NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA_ID)
 VALUES('Иван Царевич и Серый Волк 5', 'Одно беспечное путешествие в прошлое — и Ивана все забыли в настоящем. «Эффект бабочки» в Тридевятом царстве', '2022-12-29', 4680, 2);
 
@@ -201,4 +201,4 @@ VALUES(2, 4);
 
 INSERT INTO PUBLIC.LIKES
 (FILM_ID, USER_ID)
-VALUES(2, 5);
+VALUES(2, 5);*/
