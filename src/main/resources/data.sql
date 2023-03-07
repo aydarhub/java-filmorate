@@ -82,6 +82,30 @@ INSERT INTO PUBLIC.MPA
 (NAME)
 VALUES('NC-17');
 
+INSERT INTO PUBLIC.GENRES
+(NAME)
+VALUES('Комедия');
+
+INSERT INTO PUBLIC.GENRES
+(NAME)
+VALUES('Драма');
+
+INSERT INTO PUBLIC.GENRES
+(NAME)
+VALUES('Мультфильм');
+
+INSERT INTO PUBLIC.GENRES
+(NAME)
+VALUES('Триллер');
+
+INSERT INTO PUBLIC.GENRES
+(NAME)
+VALUES('Документальный');
+
+INSERT INTO PUBLIC.GENRES
+(NAME)
+VALUES('Боевик');
+
 INSERT INTO PUBLIC.FILMS
 (NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA_ID)
 VALUES('Иван Царевич и Серый Волк 5', 'Одно беспечное путешествие в прошлое — и Ивана все забыли в настоящем. «Эффект бабочки» в Тридевятом царстве', '2022-12-29', 4680, 2);
@@ -89,6 +113,10 @@ VALUES('Иван Царевич и Серый Волк 5', 'Одно беспе�
 INSERT INTO PUBLIC.FILMS
 (NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA_ID)
 VALUES('Всё везде и сразу', 'Судьба мультивселенной — в руках владелицы прачечной. Изобретательный и остроумный боевик с Мишель Йео', '2022-04-07', 8340, 5);
+
+INSERT INTO PUBLIC.FILMS
+(NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA_ID)
+VALUES('Фокус', 'История об опытном мошеннике, который влюбляется в девушку, делающую первые шаги на поприще нелегального отъема средств у граждан.', '2015-02-24', 6240, 5);
 
 INSERT INTO PUBLIC.GENRES
 (NAME)
@@ -158,7 +186,7 @@ VALUES(1, 2);
 
 INSERT INTO PUBLIC.LIKES
 (FILM_ID, USER_ID)
-VALUES(1, 2);
+VALUES(1, 1);
 
 
 INSERT INTO PUBLIC.LIKES

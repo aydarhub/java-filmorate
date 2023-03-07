@@ -68,7 +68,7 @@ public class UserController {
     @GetMapping("/{id}")
     public User userById(@PathVariable Long id) {
         log.info(String.format("Получение пользователя с id = %d", id));
-        return userService.userById(id);
+        return userService.findById(id);
     }
 
     private void validateUser(User user) {

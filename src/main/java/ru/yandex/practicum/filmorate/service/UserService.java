@@ -21,7 +21,7 @@ public class UserService {
     private final UserStorage userStorage;
 
     @Autowired
-    public UserService(@Qualifier("inMemoryUserStorage") UserStorage userStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
@@ -33,8 +33,8 @@ public class UserService {
         return userStorage.update(user);
     }
 
-    public User userById(Long id) {
-        return userStorage.get(id).orElseThrow(() -> {
+    public User findById(Long id) {
+        return userStorage.findById(id).orElseThrow(() -> {
             log.warn(String.format("Пользователя с таким id = %d не существует", id));
             throw new NotFoundException(String.format("Пользователя с таким id = %d не существует", id));
         });
@@ -45,7 +45,7 @@ public class UserService {
     }
 
     public void addToFriend(Long userId, Long friendId) {
-        if (userById(userId).getFriends().containsKey(friendId)) {
+        if (findById(userId).getFriends().containsKey(friendId)) {
             acceptRequestFriend(userId, friendId);
         } else {
             sendRequestToFriend(userId, friendId);
@@ -64,11 +64,18 @@ public class UserService {
         userStorage.removeFromFriends(userId, friendId);
     }
 
+    /*
+     * Сначала по невнимательности реализовал подтверждение дружбы.
+     * Потом подогнал под тесты, что пользователь считается другом
+     * не только когда дружба подтверждена (FriendStatus.FRIEND), но также если есть
+     * неподтвержденная исходящая заявка (FriendStatus.NOT_APPROVED_OUTGOING).
+     */
     public List<User> findUserFriends(Long id) {
-        User user = userById(id);
+        User user = findById(id);
         return user.getFriends().keySet().stream()
-                .filter(friendId -> user.getFriends().get(friendId).equals(FriendStatus.FRIEND))
-                .map(userStorage::get)
+                .filter(friendId -> user.getFriends().get(friendId).equals(FriendStatus.FRIEND)
+                        || user.getFriends().get(friendId).equals(FriendStatus.NOT_APPROVED_OUTGOING))
+                .map(userStorage::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());

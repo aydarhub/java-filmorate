@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -30,12 +32,11 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительной")
     private int duration;
 
-    private final Set<Long> likes = new HashSet<>();
+    private final List<Long> likes;
 
-    @NotBlank
-    private final Set<Genre> genre = new HashSet<>();
+    private final LinkedHashSet<Genre> genres;
 
-    @NotBlank
+    @NotNull
     private Mpa mpa;
 
 }

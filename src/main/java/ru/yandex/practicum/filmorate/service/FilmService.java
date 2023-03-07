@@ -20,7 +20,7 @@ public class FilmService {
     private final UserService userService;
 
     @Autowired
-    public FilmService(@Qualifier("inMemoryFilmStorage") FilmStorage filmStorage, UserService userService) {
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage, UserService userService) {
         this.filmStorage = filmStorage;
         this.userService = userService;
     }
@@ -34,7 +34,7 @@ public class FilmService {
     }
 
     public Film filmById(Long id) {
-        return filmStorage.get(id).orElseThrow(() -> {
+        return filmStorage.findById(id).orElseThrow(() -> {
             log.warn(String.format("Фильма с таким id = %d не существует", id));
             throw new NotFoundException(String.format("Фильма с таким id = %d не существует", id));
         });
@@ -50,13 +50,13 @@ public class FilmService {
 
     public void like(Long id, Long userId) {
         Film film = filmById(id);
-        User user = userService.userById(userId);
+        User user = userService.findById(userId);
         filmStorage.like(film, user.getId());
     }
 
     public void unlike(Long id, Long userId) {
         Film film = filmById(id);
-        User user = userService.userById(userId);
+        User user = userService.findById(userId);
         filmStorage.unlike(film, user.getId());
     }
 
