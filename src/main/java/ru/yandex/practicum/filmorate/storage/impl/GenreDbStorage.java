@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.impl.dao;
+package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +19,12 @@ public class GenreDbStorage implements GenreStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
+    private static final String SELECT_ALL_GENRES = "SELECT * FROM genres";
+    private static final String SELECT_GENRE_BY_ID = "SELECT * FROM genres WHERE genre_id = ?";
+
     @Override
     public Collection<Genre> findAll() {
-        String selectSql = "SELECT * FROM genres";
-        return jdbcTemplate.query(selectSql, (rs, rowNum) -> makeGenre(rs));
+        return jdbcTemplate.query(SELECT_ALL_GENRES, (rs, rowNum) -> makeGenre(rs));
     }
 
     private Genre makeGenre(ResultSet rs) throws SQLException {
@@ -33,8 +35,7 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public Optional<Genre> findById(Integer id) {
-        String selectSql = "SELECT * FROM genres WHERE genre_id = ?";
-        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(selectSql, id);
+        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(SELECT_GENRE_BY_ID, id);
         if (!sqlRowSet.next()) {
             return Optional.empty();
         }

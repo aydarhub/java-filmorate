@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.impl.dao;
+package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,10 +18,12 @@ public class MpaDbStorage implements MpaStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
+    private static final String SELECT_ALL_MPA = "SELECT * FROM mpa";
+    private static final String SELECT_MPA_BY_ID = "SELECT * FROM mpa WHERE mpa_id = ?";
+
     @Override
     public Collection<Mpa> findAll() {
-        String selectSql = "SELECT * FROM mpa";
-        return jdbcTemplate.query(selectSql, (rs, rowNum) -> makeMpa(rs));
+        return jdbcTemplate.query(SELECT_ALL_MPA, (rs, rowNum) -> makeMpa(rs));
     }
 
     private Mpa makeMpa(ResultSet rs) throws SQLException {
@@ -32,8 +34,7 @@ public class MpaDbStorage implements MpaStorage {
 
     @Override
     public Optional<Mpa> findById(int id) {
-        String selectSql = "SELECT * FROM mpa WHERE mpa_id = ?";
-        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(selectSql, id);
+        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(SELECT_MPA_BY_ID, id);
         if (!sqlRowSet.next()) {
             return Optional.empty();
         }
